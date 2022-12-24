@@ -91,11 +91,11 @@ if __name__ == "__main__":
         infer_model.process_file_list(run_args)
 
         # merge block segmentations
+        print("Merge block segmentations...")
         slide_nuc_dict = {}
         slide_nuc_id = 1
         block_list = sorted([os.path.splitext(ele)[0] for ele in os.listdir(cur_block_seg_dir) if ele.endswith(".json")])
         for block_idx, cur_block in enumerate(block_list):
-            print("...Analyze {:3d}/{:3d} {}".format(block_idx+1, len(block_list), cur_block))
             wstart_pos = cur_block.index("Wstart")
             hstart_pos = cur_block.index("Hstart")
             wlen_pos = cur_block.index("Wlen")
