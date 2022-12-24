@@ -1,6 +1,6 @@
 # NucleiSegHE
 H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net - [pretrained model and demo ROIs/WSIs](https://www.synapse.org/#!Synapse:syn50545401/files).
-![Demo segmented nuclei overlaying ROI](zoo/Demo_ROI_Seg_Overlay.PNG)
+![Demo nuclei overlaying ROI/WSI](NucleiSeg-ROI-WSI.png)
 
 ## Environment Configurations
 ### a. Prepare docker image
