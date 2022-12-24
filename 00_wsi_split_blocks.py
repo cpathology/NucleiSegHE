@@ -2,13 +2,13 @@
 
 import os, sys
 import shutil, argparse, pytz
-from joblib import Parallel, delayed
 from datetime import datetime
 import openslide
 import numpy as np
 from skimage import io
+from joblib import Parallel, delayed
 
-from split_utils import get_splitting_coors
+from misc.utils import get_splitting_coors
 
 
 def set_args():
@@ -18,7 +18,7 @@ def set_args():
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
     parser.add_argument("--block_size",        type=int,       default=5000)
     parser.add_argument("--num_workers",       type=int,       default=64)
-    parser.add_argument("--dataset",           type=str,       default="NLPHL", choices=["NLPHL", "CLL", "Lung"])    
+    parser.add_argument("--dataset",           type=str,       default="CLL", choices=["CLL", "NLPHL", "Lung"])    
     args = parser.parse_args()
     return args
 
@@ -26,10 +26,11 @@ def set_args():
 if __name__ == "__main__":
     args = set_args()
     # Slide directory
-    slide_root_dir = os.path.join(args.data_root, args.dataset, args.slide_dir)
+    dataset_root_dir = os.path.join(args.data_root, "WSIs", args.dataset)
+    slide_root_dir = os.path.join(dataset_root_dir, args.slide_dir)
     slide_list = sorted([ele for ele in os.listdir(slide_root_dir) if os.path.splitext(ele)[1] in [".svs", ".tiff"]])
     # Block directory
-    block_root_dir = os.path.join(args.data_root, args.dataset, args.block_dir)
+    block_root_dir = os.path.join(dataset_root_dir, args.block_dir)
     if not os.path.exists(block_root_dir):
         os.makedirs(block_root_dir)
 
