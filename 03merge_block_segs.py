@@ -6,8 +6,8 @@ from datetime import datetime
 import openslide
 import math, json
 import numpy as np
-from skimage import io, filters
-import matplotlib.pyplot as plt
+
+from misc.utils import shift_contour
 
 
 def set_args():
@@ -15,34 +15,18 @@ def set_args():
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--block_seg_dir",     type=str,       default="BlockSegs")
     parser.add_argument("--slide_seg_dir",     type=str,       default="SlideSegs")
+    parser.add_argument("--dataset",           type=str,       default="URMC", choices=["URMC", "MDACC", "UNMC"])    
 
     args = parser.parse_args()
     return args
 
 
-def update_contour(cnt_dict, wstart, hstart):
-    ## centroid
-    cnt_dict["centroid"][0] += wstart
-    cnt_dict["centroid"][1] += hstart
-    ## bbox
-    box_len = len(cnt_dict["bbox"])
-    for ind in range(box_len):
-        cnt_dict["bbox"][ind][0] += wstart
-        cnt_dict["bbox"][ind][1] += hstart
-    ## contour
-    cnt_len = len(cnt_dict["contour"])
-    for ind in range(cnt_len):
-        cnt_dict["contour"][ind][0] += wstart
-        cnt_dict["contour"][ind][1] += hstart
-
-    return cnt_dict
-
-
 if __name__ == "__main__":
     args = set_args()
     # Slide directory
-    block_seg_root_dir = os.path.join(args.data_root, args.block_seg_dir)
-    slide_seg_root_dir = os.path.join(args.data_root, args.slide_seg_dir)
+    data_root = os.path.join(args.data_root, args.dataset)
+    block_seg_root_dir = os.path.join(data_root, args.block_seg_dir)
+    slide_seg_root_dir = os.path.join(data_root, args.slide_seg_dir)
     if not os.path.exists(slide_seg_root_dir):
         os.makedirs(slide_seg_root_dir)
 
@@ -72,7 +56,7 @@ if __name__ == "__main__":
             nuc_dict = seg_inst_dict["nuc"]
             # traverse nucleus one-by-one
             for ind, cur_inst in enumerate(nuc_dict.keys()):
-                slide_nuc_dict[str(slide_nuc_id)] = update_contour(nuc_dict[cur_inst], block_wstart, block_hstart)
+                slide_nuc_dict[str(slide_nuc_id)] = shift_contour(nuc_dict[cur_inst], block_wstart, block_hstart)
                 slide_nuc_id += 1
         # save json file
         slide_json_path = os.path.join(slide_seg_root_dir, cur_slide + ".json")

@@ -1,12 +1,74 @@
-import glob
-import inspect
-import logging
-import os
-import shutil
+# -*- coding: utf-8 -*-
 
-import cv2
+import os, sys
+import glob, inspect, logging, shutil, struct
+import itertools, colorsys, random
 import numpy as np
 from scipy import ndimage
+import cv2
+
+
+
+####
+def bounding_box(img):
+    rows = np.any(img, axis=1)
+    cols = np.any(img, axis=0)
+    rmin, rmax = np.where(rows)[0][[0, -1]]
+    cmin, cmax = np.where(cols)[0][[0, -1]]
+    # due to python indexing, need to add 1 to max
+    # else accessing will be 1px in the box, not out
+    rmax += 1
+    cmax += 1
+    return [rmin, rmax, cmin, cmax]
+
+
+####
+def random_colors(N, bright=True):
+    """
+    Generate random colors.
+    To get visually distinct colors, generate them in HSV space then
+    convert to RGB.
+    """
+    random.seed(1234)
+    brightness = 1.0 if bright else 0.7
+    hsv = [(i / N, 1, brightness) for i in range(N)]
+    colors = list(map(lambda c: colorsys.hsv_to_rgb(*c), hsv))
+    random.shuffle(colors)
+    return colors
+
+
+####
+def get_splitting_coors(wsi_w, wsi_h, block_size):
+    def split_coor(ttl_len, sub_len):
+        split_num = int(np.floor((ttl_len + sub_len / 2) / sub_len))
+        split_pair = [(num * sub_len, sub_len) for num in range(split_num-1)]
+        split_pair.append(((split_num-1) * sub_len, ttl_len - (split_num-1) * sub_len))
+        return split_pair
+
+    w_pairs = split_coor(wsi_w, block_size)
+    h_pairs = split_coor(wsi_h, block_size)
+    coors_list = [(ele[0][0], ele[1][0], ele[0][1], ele[1][1]) for ele in list(itertools.product(w_pairs, h_pairs))]
+
+    return coors_list
+
+
+####    
+def shift_contour(cnt_dict, wstart, hstart):
+    ## centroid
+    cnt_dict["centroid"][0] += wstart
+    cnt_dict["centroid"][1] += hstart
+    ## bbox
+    box_len = len(cnt_dict["bbox"])
+    for ind in range(box_len):
+        cnt_dict["bbox"][ind][0] += wstart
+        cnt_dict["bbox"][ind][1] += hstart
+    ## contour
+    cnt_len = len(cnt_dict["contour"])
+    for ind in range(cnt_len):
+        cnt_dict["contour"][ind][0] += wstart
+        cnt_dict["contour"][ind][1] += hstart
+
+    return cnt_dict
 
 
 ####
@@ -180,3 +242,38 @@ def remove_small_objects(pred, min_size=64, connectivity=1):
     out[too_small_mask] = 0
 
     return out
+
+
+def numpy2tiff(image, path):
+    def tiff_tag(tag_code, datatype, values):
+        types = {'<H': 3, '<L': 4, '<Q': 16}
+        datatype_code = types[datatype]
+        number = 1 if isinstance(values, int) else len(values)
+        if number == 1:
+            values_bytes = struct.pack(datatype, values)
+        else:
+            values_bytes = struct.pack('<' + (datatype[-1:] * number), *values)
+        tag_bytes = struct.pack('<HHQ', tag_code, datatype_code, number) + values_bytes
+        tag_bytes += b'\x00' * (20 - len(tag_bytes))
+        return tag_bytes
+
+    image_bytes = image.shape[0] * image.shape[1] * image.shape[2]
+    with open(path, 'wb+') as f:
+        image.reshape((image_bytes,))
+        f.write(b'II')
+        f.write(struct.pack('<H', 43))  # Version number
+        f.write(struct.pack('<H', 8))  # Bytesize of offsets
+        f.write(struct.pack('<H', 0))  # always zero
+        f.write(struct.pack('<Q', 16 + image_bytes))  # Offset to IFD
+        for offset in range(0, image_bytes, 2 ** 20):
+            f.write(image[offset:offset + 2 ** 20].tobytes())
+        f.write(struct.pack('<Q', 8))  # Number of tags in IFD
+        f.write(tiff_tag(256, '<L', image.shape[1]))  # ImageWidth tag
+        f.write(tiff_tag(257, '<L', image.shape[0]))  # ImageLength tag
+        f.write(tiff_tag(258, '<H', (8, 8, 8)))  # BitsPerSample tag
+        f.write(tiff_tag(262, '<H', 2))  # PhotometricInterpretation tag
+        f.write(tiff_tag(273, '<H', 16))  # StripOffsets tag
+        f.write(tiff_tag(277, '<H', 3))  # SamplesPerPixel
+        f.write(tiff_tag(278, '<Q', image_bytes // 8192))  # RowsPerStrip
+        f.write(tiff_tag(279, '<Q', image_bytes))  # StripByteCounts
+        f.write(struct.pack('<Q', 0))  # Offset to next IFD

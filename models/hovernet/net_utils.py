@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from collections import OrderedDict
 
 from .utils import crop_op, crop_to_shape
-from config import Config
+from misc.config import Config
 
 
 ####
