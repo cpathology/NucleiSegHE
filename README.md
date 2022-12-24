@@ -1,5 +1,5 @@
 # NucleiSegHE
-H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net - [pretrained model and demo ROIs/WSIs] (https://www.synapse.org/#!Synapse:syn50545401/files).
+H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net - [pretrained model and demo ROIs/WSIs](https://www.synapse.org/#!Synapse:syn50545401/files).
 ![Demo segmented nuclei overlaying ROI](zoo/Demo_ROI_Seg_Overlay.PNG)
 
 ## Environment Configurations
@@ -31,7 +31,7 @@ $ docker run -it --rm  --user $(id -u):$(id -g) \
   --name nucleiseghe_chen nucleiseghe:chen
 ```
 
-## ROI-Level Seg (only support png)
+## ROI-Level Nuclei Seg (support png)
 Inside the docker container, enter */App/NucleiSegHE*
 ```
 # Nuclei Segmentation
@@ -40,7 +40,7 @@ $ python 01_roi_seg_nuclei.py --dataset LungNYU
 $ python 02_roi_nuclei_overlay.py --dataset LungNYU
 ```
 
-## WSI-Level Seg (support svs/tiff)
+## WSI-Level Nuclei Seg (support svs/tiff)
 Inside the docker container, enter */App/NucleiSegHE*
 ```
 # Split WSI into smaller blocks (5000 x 5000)
