@@ -17,7 +17,7 @@ $ docker tag pingjunchen/nucleiseghe:chen nucleiseghe:chen
 ```
 
 ### Setup docker container
-* Start docker container (Specify CODE_ROOT & DATA_ROOT)
+* Start docker container (specify CODE_ROOT & DATA_ROOT)
 ```
 $ docker run -it --rm --user $(id -u):$(id -g) \
   -v ${CODE_ROOT}:/App/NucleiSegHE \
@@ -25,7 +25,7 @@ $ docker run -it --rm --user $(id -u):$(id -g) \
   --shm-size=224G --gpus '"device=0,1"' --cpuset-cpus=0-15 \
   --name nucleiseghe_chen nucleiseghe:chen
 ```
-For example:
+* For example:
 ```
 $ docker run -it --rm  --user $(id -u):$(id -g) \
   -v /rsrch1/ip/pchen6/Codes/CHEN/NucleiSegHE:/App/NucleiSegHE \
@@ -38,18 +38,28 @@ $ docker run -it --rm  --user $(id -u):$(id -g) \
 Inside the docker container, enter */App/NucleiSegHE*
 ```
 # Nuclei Segmentation
-$ python 01_roi_seg.py --dataset LungNYU
+$ python 01_roi_seg_nuclei.py --dataset LungNYU
 # Nuclei Overlay
-$ python 02_roi_seg_overlay.py --dataset LungNYU
+$ python 02_roi_nuclei_overlay.py --dataset LungNYU
 ```
 
 ## WSI-Level Seg (svs/tiff format supported)
 Inside the docker container, enter */App/NucleiSegHE*
 ```
 # Split WSI into smaller blocks (5000 x 5000)
-$ python 00_wsi_split.py --dataset CLL
+$ python 00_wsi_split_blocks.py --dataset Lung
 # Block-wise WSI nuclei segmentation and merging
-$ python 01_wsi_seg.py --dataset CLL
+$ python 01_wsi_seg_nuclei.py --dataset Lung
 # Nuclei overlay to the entire WSI
-$ python 01_wsi_seg.py --dataset CLL
+$ python 02_wsi_nuclei_overlay.py --dataset Lung
 ```
+
+
+## Acknowledgements
+This repo is adapted from following codes
+- [vqdang/hover_net](https://github.com/vqdang/hover_net)
+- [simongraham/hovernet_inference](https://github.com/simongraham/hovernet_inference)
+
+Please consider citing the following two papers if this repo was used for nuclei segmentation in your research
+- [Hover-Net: Simultaneous segmentation and classification of nuclei in multi-tissue histology images](https://www.sciencedirect.com/science/article/pii/S1361841519301045)
+- [PanNuke: an open pan-cancer histology dataset for nuclei instance segmentation and classification](https://link.springer.com/chapter/10.1007/978-3-030-23937-4_2)
