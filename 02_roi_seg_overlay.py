@@ -15,6 +15,7 @@ def set_args():
     parser.add_argument("--dataset",           type=str,       default="LungNYU", choices=["LungNYU", "LungJapan"])     
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")
     parser.add_argument("--seg_dir",           type=str,       default="RawSegs")
+    parser.add_argument("--overlay_dir",       type=str,       default="SegOverlays")
 
 
     args = parser.parse_args()
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     # Blue-Others / Purple-Neoplastic / Cyan-Inflammatory / Lime-Connective / Teal-Dead / Brown-Non-Neoplastic   
 
     # directory setting
-    dataset_root_dir = os.path.join(args.data_root, "DemoROIs", args.dataset)
+    dataset_root_dir = os.path.join(args.data_root, "ROIs", args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
         sys.exit("{} directory not exist.".format(input_roi_dir))
@@ -40,9 +41,14 @@ if __name__ == "__main__":
     else:
         print("----Seg {} ROIs....".format(len(roi_lst)))
     seg_roi_dir = os.path.join(dataset_root_dir, args.seg_dir)
-    seg_lst = sorted([os.path.splitext(ele)[0] for ele in os.listdir(input_roi_dir) if ele.endswith(".json")])
+    seg_lst = sorted([os.path.splitext(ele)[0] for ele in os.listdir(seg_roi_dir) if ele.endswith(".json")])
     assert len(roi_lst) == len(seg_lst), "ROI segmentation is not completed yet"
+    seg_overlay_dir = os.path.join(dataset_root_dir, args.overlay_dir)
+    if os.path.exists(seg_overlay_dir):
+        shutil.rmtree(seg_overlay_dir)
+    os.makedirs(seg_overlay_dir)
 
+    # overlay nuclei segmentation
     for ind, cur_roi in enumerate(roi_lst):
         print("Overlay {}/{} ROI: {}".format(ind+1, len(roi_lst), cur_roi))
         # read image
@@ -54,7 +60,8 @@ if __name__ == "__main__":
         inst_dict = seg_dict["nuc"]
         for idx, [inst_id, inst_info] in enumerate(inst_dict.items()):
             inst_contour = np.expand_dims(np.array(inst_info["contour"]), axis=1)
-            if len(inst_contour) != 1:
-                print("{} contours.".format(len(inst_contour)))
             inst_color = cell_color_dict[inst_info["type"]]
-            cv2.drawContours(roi_img, [inst_contour,], 0, inst_color, 1)             
+            cv2.drawContours(roi_img, [inst_contour,], 0, inst_color, 1)
+        seg_overlay_path = os.path.join(seg_overlay_dir, cur_roi + ".png") 
+        io.imsave(seg_overlay_path, roi_img)
+                
