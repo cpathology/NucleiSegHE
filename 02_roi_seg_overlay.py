@@ -12,7 +12,7 @@ from misc.utils import bounding_box, random_colors
 def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
-    parser.add_argument("--dataset",           type=str,       default="DatasetA", choices=["DatasetA", "DatasetB"])     
+    parser.add_argument("--dataset",           type=str,       default="LungNYU", choices=["LungNYU", "LungJapan"])     
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")
     parser.add_argument("--seg_dir",           type=str,       default="RawSegs")
 

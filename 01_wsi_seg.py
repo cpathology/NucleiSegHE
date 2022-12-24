@@ -5,13 +5,15 @@ import copy, argparse, pytz
 from datetime import datetime
 
 from infer.tile import InferManager
+from misc.utils import shift_contour
 
 
 def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
-    parser.add_argument("--seg_dir",           type=str,       default="BlockSegs")
+    parser.add_argument("--block_seg_dir",     type=str,       default="BlockSegs")
+    parser.add_argument("--slide_seg_dir",     type=str,       default="SlideSegs")    
     parser.add_argument("--gpu_ids",           type=str,       default="0,1,2,3")
     parser.add_argument("--batch_size",        type=int,       default=64)
     parser.add_argument("--num_workers",       type=int,       default=32)
@@ -67,5 +69,9 @@ if __name__ == "__main__":
         run_args['input_dir'] = cur_slide_block_dir
         run_args['output_dir'] = cur_block_seg_dir
         infer.process_file_list(run_args)
+
+        # merge block segmentations
+
+
         cur_time_str = datetime.now(pytz.timezone('America/Chicago')).strftime("%m/%d/%Y, %H:%M:%S")
         print("Finish @ {}".format(cur_time_str))
