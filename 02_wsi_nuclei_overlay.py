@@ -12,7 +12,7 @@ import cv2
 import PIL
 from PIL import Image
 PIL.Image.MAX_IMAGE_PIXELS = 933120000
-from numpy2tiff import numpy2tiff
+from misc.utils import numpy2tiff
 
 
 def set_args():
@@ -20,8 +20,9 @@ def set_args():
     parser.add_argument("--data_root",        type=str,       default="/Data")
     parser.add_argument("--slide_dir",        type=str,       default="RawSlides")
     parser.add_argument("--block_dir",        type=str,       default="SlideBlocks")
-    parser.add_argument("--seg_dir",          type=str,       default="BlockSegs")
+    parser.add_argument("--block_seg_dir",    type=str,       default="BlockSegs")
     parser.add_argument("--overlay_dir",      type=str,       default="OverlaySlides")
+    parser.add_argument("--dataset",          type=str,       default="CLL", choices=["CLL", "NLPHL", "Lung"])      
 
     args = parser.parse_args()
     return args
@@ -29,33 +30,42 @@ def set_args():
 
 if __name__ == "__main__":
     args = set_args()
-    type_color_dict = {0: (0, 0, 255), 1: (255, 0, 0), 2: (0, 255, 0)}
-    # Slide directory
-    slide_root_dir = os.path.join(args.data_root, args.slide_dir)
-    # block directory
-    block_root_dir = os.path.join(args.data_root, args.block_dir)
-    # seg directory
-    seg_root_dir = os.path.join(args.data_root, args.seg_dir)
+
+    # overlay cell color setting
+    cell_color_dict = {0: (0, 130, 200), 1: (145, 30, 180), 2: (70, 240, 240), 3: (210, 245, 60), 
+                    4: (0, 128, 128), 5: (170, 110, 40)}
+    # Blue-Others / Purple-Neoplastic / Cyan-Inflammatory / Lime-Connective / Teal-Dead / Brown-Non-Neoplastic  
+    
+    # directory setting
+    dataset_root_dir = os.path.join(args.data_root, "WSIs", args.dataset)
+    slide_root_dir = os.path.join(dataset_root_dir, args.slide_dir)
+    slide_block_dir = os.path.join(dataset_root_dir, args.block_dir)
+    if not os.path.exists(slide_block_dir):
+        sys.exit("{} directory not exist.".format(slide_block_dir))
+    block_seg_dir = os.path.join(dataset_root_dir, args.block_seg_dir)
+    if not os.path.exists(block_seg_dir):
+        sys.exit("{} directory not exist.".format(block_seg_dir))
     # overlay directory
-    overlay_root_dir = os.path.join(args.data_root, args.overlay_dir)
+    overlay_root_dir = os.path.join(dataset_root_dir, args.overlay_dir)
     if not os.path.exists(overlay_root_dir):
         os.makedirs(overlay_root_dir)
 
     # overlay slides one-by-one
     slide_list = sorted([ele for ele in os.listdir(slide_root_dir) if os.path.splitext(ele)[1] in [".svs", ".tiff", ".tif"]])
     for slide_idx, cur_slide in enumerate(slide_list):
-        cur_time_str = datetime.now(pytz.timezone('America/Chicago')).strftime("%H:%M:%S")
-        print("@ {} Start overlay {:2d}/{:2d} {}".format(cur_time_str, slide_idx+1, len(slide_list), cur_slide))
         cur_slide_name = os.path.splitext(cur_slide)[0]
         pyramid_tif_path = os.path.join(overlay_root_dir, cur_slide_name + ".tiff")
         if os.path.exists(pyramid_tif_path):
             continue
-        cur_block_dir = os.path.join(block_root_dir, cur_slide_name)
+        cur_block_dir = os.path.join(slide_block_dir, cur_slide_name)
         if not os.path.exists(cur_block_dir):
             continue
-        cur_seg_dir = os.path.join(seg_root_dir, cur_slide_name)
+        cur_seg_dir = os.path.join(block_seg_dir, cur_slide_name)
         if not os.path.exists(cur_seg_dir):
             continue
+        
+        cur_time_str = datetime.now(pytz.timezone('America/Chicago')).strftime("%H:%M:%S")
+        print("@ {} Start overlay {:2d}/{:2d} {}".format(cur_time_str, slide_idx+1, len(slide_list), cur_slide))
         # load slide
         cur_slide_path = os.path.join(slide_root_dir, cur_slide)
         slide_head = openslide.OpenSlide(cur_slide_path)
@@ -64,7 +74,6 @@ if __name__ == "__main__":
         # processing blocks one-by-one
         block_list = sorted([os.path.splitext(ele)[0] for ele in os.listdir(cur_block_dir) if ele.endswith(".png")])
         for block_idx, cur_block in enumerate(block_list):
-            print("...Analyze {:3d}/{:3d} {}".format(block_idx+1, len(block_list), cur_block))
             wstart_pos = cur_block.index("Wstart")
             hstart_pos = cur_block.index("Hstart")
             wlen_pos = cur_block.index("Wlen")
@@ -80,16 +89,9 @@ if __name__ == "__main__":
             cur_seg_path = os.path.join(cur_seg_dir, cur_block + ".json")
             seg_inst_dict = json.load(open(cur_seg_path, "r"))
             inst_dict = seg_inst_dict["nuc"]
-            line_thickness = -1
             for idx, [inst_id, inst_info] in enumerate(inst_dict.items()):
                 inst_contour = np.expand_dims(np.array(inst_info["contour"]), axis=1)
-                inst_type = inst_info["type"]
-                if inst_type == 3 or inst_type == 5:
-                    inst_type = 0
-                if inst_type == 4:
-                    inst_type = 2
-                inst_color = type_color_dict[inst_type]
-                cv2.drawContours(block_overlay, [inst_contour,], -1, inst_color, line_thickness)
+                cv2.drawContours(block_overlay, [inst_contour, ], 0, cell_color_dict[inst_info["type"]], 1)
             slide_overlay[block_hstart:block_hstart+block_height,block_wstart:block_wstart+block_width] = block_overlay
         # save overlay as BigTIFF image
         big_tif_path = os.path.join(overlay_root_dir, cur_slide_name + ".tif")
