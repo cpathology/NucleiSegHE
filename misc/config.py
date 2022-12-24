@@ -4,7 +4,7 @@ import random
 import cv2
 import numpy as np
 
-from dataset import get_dataset
+from .dataset import get_dataset
 
 
 class Config(object):
