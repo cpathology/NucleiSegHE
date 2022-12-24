@@ -44,11 +44,11 @@ $ python 02_roi_nuclei_overlay.py --dataset LungNYU
 Inside the docker container, enter */App/NucleiSegHE*
 ```
 # Split WSI into smaller blocks (5000 x 5000)
-$ python 00_wsi_split_blocks.py --dataset Lung
+$ python 00_wsi_split_blocks.py --dataset CLL
 # Block-wise WSI nuclei segmentation and merging
-$ python 01_wsi_seg_nuclei.py --dataset Lung
+$ python 01_wsi_seg_nuclei.py --dataset CLL
 # Nuclei overlay to the entire WSI
-$ python 02_wsi_nuclei_overlay.py --dataset Lung
+$ python 02_wsi_nuclei_overlay.py --dataset CLL
 ```
 
 ## Acknowledgements
