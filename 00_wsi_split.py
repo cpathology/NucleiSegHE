@@ -16,9 +16,9 @@ def set_args():
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--slide_dir",         type=str,       default="RawSlides")
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
-    parser.add_argument("--block_size",        type=int,       default=8000)
+    parser.add_argument("--block_size",        type=int,       default=5000)
     parser.add_argument("--num_workers",       type=int,       default=64)
-    parser.add_argument("--dataset",           type=str,       default="URMC", choices=["URMC", "MDACC", "UNMC"])    
+    parser.add_argument("--dataset",           type=str,       default="NLPHL", choices=["NLPHL", "CLL", "Lung"])    
     args = parser.parse_args()
     return args
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     args = set_args()
     # Slide directory
     slide_root_dir = os.path.join(args.data_root, args.dataset, args.slide_dir)
-    slide_list = sorted([ele for ele in os.listdir(slide_root_dir) if os.path.splitext(ele)[1] in [".svs", ".tiff", ".tif"]])
+    slide_list = sorted([ele for ele in os.listdir(slide_root_dir) if os.path.splitext(ele)[1] in [".svs", ".tiff"]])
     # Block directory
     block_root_dir = os.path.join(args.data_root, args.dataset, args.block_dir)
     if not os.path.exists(block_root_dir):
