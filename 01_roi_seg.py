@@ -11,7 +11,7 @@ def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--checkpoint_dir",    type=str,       default="Checkpoints")
-    parser.add_argument("--dataset",           type=str,       default="DatasetA", choices=["DatasetA", "DatasetB"])     
+    parser.add_argument("--dataset",           type=str,       default="LungNYU", choices=["LungNYU", "LungJapan"])      
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")
     parser.add_argument("--seg_dir",           type=str,       default="RawSegs")
     parser.add_argument("--gpu_ids",           type=str,       default="0,1")
