@@ -3,7 +3,9 @@ H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net
 
 * Pretrained model and demo ROIs/WSIs can be downloaded from [synapse.org](https://www.synapse.org/#!Synapse:syn50545401/files).
 
-### Docker Image Preparation
+## Environment Configuration
+
+### Prepare docker image
 * Build from Dockerfile
 ```
 $ docker build -t nucleiseghe:chen .
@@ -14,7 +16,7 @@ $ docker pull pingjunchen/nucleiseghe:chen
 $ docker tag pingjunchen/nucleiseghe:chen nucleiseghe:chen
 ```
 
-### Config Environment 
+### Setup docker container
 * Start docker container (Specify CODE_ROOT & DATA_ROOT)
 ```
 $ docker run -it --rm --user $(id -u):$(id -g) \
@@ -32,12 +34,14 @@ $ docker run -it --rm  --user $(id -u):$(id -g) \
   --name nucleiseghe_chen nucleiseghe:chen
 ```
 
-### ROI-Level Seg
-* ROI images saved in png format
-Inside the docker container under folder */App/NucleiSegHE*, run
+## ROI-Level Seg (png format supported)
+Inside the docker container under folder */App/NucleiSegHE*
 ```
-$ python nuclei_seg.py
+# Nuclei Segmentation
+$ python 01_roi_seg.py --dataset LungNYU
+# Nuclei Overlay
+$ python 02_roi_seg_overlay.py --dataset LungNYU
 ```
 
-
-### WSI-Level Seg
+## WSI-Level Seg (svs/tiff format supported)
+Inside the docker container under folder */App/NucleiSegHE*
