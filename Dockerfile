@@ -35,6 +35,8 @@ RUN pip install gpustat==0.6.0 setuptools==61.2.0 pytz==2021.1 termcolor==1.1.0
 RUN conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
 RUN pip install openslide-python==1.2.0 tifffile==2021.10.12
 RUN pip install opencv-python==4.5.4.60 scikit-image==0.18.0
+RUN pip install tqdm==4.64.0 docopt==0.6.2 imgaug==0.4.0
+RUN pip install joblib==1.2.0
 
 # Set environment variables
 WORKDIR /.dgl
