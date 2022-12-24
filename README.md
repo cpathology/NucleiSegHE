@@ -1,7 +1,7 @@
 # NucleiSegHE
 H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net
 
-* Pretrained model and demo ROIs/WSIs can be downloaded from [synapse.org](https://www.synapse.org/#!Synapse:syn50544804).
+* Pretrained model and demo ROIs/WSIs can be downloaded from [synapse.org](https://www.synapse.org/#!Synapse:syn50545401/files).
 
 ### Docker Image Preparation
 * Build from Dockerfile
