@@ -27,7 +27,7 @@ if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
 
     # directory setting
-    dataset_root_dir = os.path.join(args.data_root, "DemoROIs", args.dataset)
+    dataset_root_dir = os.path.join(args.data_root, "ROIs", args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
         sys.exit("{} directory not exist.".format(input_roi_dir))
