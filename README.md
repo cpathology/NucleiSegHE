@@ -1,4 +1,6 @@
 # NucleiSegHE
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7480809.svg)](https://doi.org/10.5281/zenodo.7480809)
+
 H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net - [pretrained model and demo ROIs/WSIs](https://www.synapse.org/#!Synapse:syn50545401/files).
 ![Demo nuclei overlaying ROI/WSI](NucleiSeg-ROI-WSI.png)
 
