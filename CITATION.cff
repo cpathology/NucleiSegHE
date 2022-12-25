@@ -1,9 +1,11 @@
-NucleiSegHE-Version: 1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: Chen
     given-names: Pingjun
     orcid: https://orcid.org/0000-0003-0528-1713
-title: cpathology/NucleiSegHE: NucleiSegHE-V1.0
+title: H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net
 version: V1.0
+doi: 10.5281/zenodo.7480809
 date-released: 2022-12-25
+url: https://github.com/cpathology/NucleiSegHE
