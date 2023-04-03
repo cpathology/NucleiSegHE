@@ -11,7 +11,7 @@ import cv2
 
 import PIL
 from PIL import Image
-PIL.Image.MAX_IMAGE_PIXELS = 933120000
+PIL.Image.MAX_IMAGE_PIXELS = None
 from misc.utils import numpy2tiff
 
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     if not os.path.exists(overlay_root_dir):
         os.makedirs(overlay_root_dir)
 
-    # overlay slides one-by-one
+   # overlay slides one-by-one
     slide_list = sorted([ele for ele in os.listdir(slide_root_dir) if os.path.splitext(ele)[1] in [".svs", ".tiff", ".tif"]])
     for slide_idx, cur_slide in enumerate(slide_list):
         cur_slide_name = os.path.splitext(cur_slide)[0]
@@ -63,36 +63,36 @@ if __name__ == "__main__":
         cur_seg_dir = os.path.join(block_seg_dir, cur_slide_name)
         if not os.path.exists(cur_seg_dir):
             continue
-        
+
         cur_time_str = datetime.now(pytz.timezone('America/Chicago')).strftime("%H:%M:%S")
         print("@ {} Start overlay {:2d}/{:2d} {}".format(cur_time_str, slide_idx+1, len(slide_list), cur_slide))
         # load slide
         cur_slide_path = os.path.join(slide_root_dir, cur_slide)
-        slide_head = openslide.OpenSlide(cur_slide_path)
-        slide_w, slide_h = slide_head.dimensions
-        slide_overlay = np.zeros((slide_h, slide_w, 3), dtype=np.uint8)
-        # processing blocks one-by-one
-        block_list = sorted([os.path.splitext(ele)[0] for ele in os.listdir(cur_block_dir) if ele.endswith(".png")])
-        for block_idx, cur_block in enumerate(block_list):
-            wstart_pos = cur_block.index("Wstart")
-            hstart_pos = cur_block.index("Hstart")
-            wlen_pos = cur_block.index("Wlen")
-            hlen_pos = cur_block.index("Hlen")
-            block_wstart = int(cur_block[wstart_pos+len("Wstart"):hstart_pos])
-            block_hstart = int(cur_block[hstart_pos+len("Hstart"):wlen_pos])
-            block_width = int(cur_block[wlen_pos+len("Wlen"):hlen_pos])
-            block_height = int(cur_block[hlen_pos+len("Hlen"):len(cur_block)])
-            # read image
-            cur_blcok_path = os.path.join(cur_block_dir, cur_block + ".png")
-            block_overlay = io.imread(cur_blcok_path)
-            # read segmentation
-            cur_seg_path = os.path.join(cur_seg_dir, cur_block + ".json")
-            seg_inst_dict = json.load(open(cur_seg_path, "r"))
-            inst_dict = seg_inst_dict["nuc"]
-            for idx, [inst_id, inst_info] in enumerate(inst_dict.items()):
-                inst_contour = np.expand_dims(np.array(inst_info["contour"]), axis=1)
-                cv2.drawContours(block_overlay, [inst_contour, ], 0, cell_color_dict[inst_info["type"]], 1)
-            slide_overlay[block_hstart:block_hstart+block_height,block_wstart:block_wstart+block_width] = block_overlay
+        with openslide.OpenSlide(cur_slide_path) as slide_head:
+            slide_w, slide_h = slide_head.dimensions
+            slide_overlay = np.zeros((slide_h, slide_w, 3), dtype=np.uint8)
+            # processing blocks one-by-one
+            block_list = sorted([os.path.splitext(ele)[0] for ele in os.listdir(cur_block_dir) if ele.endswith(".png")])
+            for cur_block in block_list:
+                wstart_pos = cur_block.index("Wstart")
+                hstart_pos = cur_block.index("Hstart")
+                wlen_pos = cur_block.index("Wlen")
+                hlen_pos = cur_block.index("Hlen")
+                block_wstart = int(cur_block[wstart_pos+len("Wstart"):hstart_pos])
+                block_hstart = int(cur_block[hstart_pos+len("Hstart"):wlen_pos])
+                block_width = int(cur_block[wlen_pos+len("Wlen"):hlen_pos])
+                block_height = int(cur_block[hlen_pos+len("Hlen"):len(cur_block)])
+                # read image
+                cur_blcok_path = os.path.join(cur_block_dir, cur_block + ".png")
+                block_overlay = io.imread(cur_blcok_path)
+                # read segmentation
+                cur_seg_path = os.path.join(cur_seg_dir, cur_block + ".json")
+                seg_inst_dict = json.load(open(cur_seg_path, "r"))
+                inst_dict = seg_inst_dict["nuc"]
+                for idx, [inst_id, inst_info] in enumerate(inst_dict.items()):
+                    inst_contour = np.expand_dims(np.array(inst_info["contour"]), axis=1)
+                    cv2.drawContours(block_overlay, [inst_contour, ], 0, cell_color_dict[inst_info["type"]], 1)
+                slide_overlay[block_hstart:block_hstart+block_height,block_wstart:block_wstart+block_width] = block_overlay
         # save overlay as BigTIFF image
         big_tif_path = os.path.join(overlay_root_dir, cur_slide_name + ".tif")
         numpy2tiff(slide_overlay, big_tif_path)
