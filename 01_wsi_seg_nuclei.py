@@ -106,7 +106,8 @@ if __name__ == "__main__":
             block_height = int(cur_block[hlen_pos+len("Hlen"):len(cur_block)])
             # read segmentation
             cur_seg_path = os.path.join(cur_block_seg_dir, cur_block + ".json")
-            seg_inst_dict = json.load(open(cur_seg_path, "r"))
+            with open(cur_seg_path, "r") as f:
+                seg_inst_dict = json.load(f)
             nuc_dict = seg_inst_dict["nuc"]
             # traverse nucleus one-by-one
             for ind, cur_inst in enumerate(nuc_dict.keys()):

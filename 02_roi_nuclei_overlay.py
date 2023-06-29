@@ -1,11 +1,15 @@
-# -*- coding: utf-8 -*-
-
-import os, sys
-import copy, argparse, pytz, shutil, json
+import os
+import sys
+import copy
+import argparse
+import pytz
+import shutil
+import json
 from datetime import datetime
 import numpy as np
 from skimage import io
 import cv2
+
 
 from misc.utils import bounding_box, random_colors
 
@@ -34,12 +38,12 @@ if __name__ == "__main__":
     dataset_root_dir = os.path.join(args.data_root, args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
-        sys.exit("{} directory not exist.".format(input_roi_dir))
+        raise ValueError(f"{input_roi_dir} directory not exist.")
     roi_lst = sorted([os.path.splitext(ele)[0] for ele in os.listdir(input_roi_dir) if ele.endswith(".png")])  
     if len(roi_lst) == 0:
-        sys.exit("No available png ROIs inside folder {}".format(input_roi_dir))
+        raise ValueError(f"No available png ROIs inside folder {input_roi_dir}")
     else:
-        print("----Seg {} ROIs....".format(len(roi_lst)))
+        print(f"----Seg {len(roi_lst)} ROIs....")
     seg_roi_dir = os.path.join(dataset_root_dir, args.seg_dir)
     seg_lst = sorted([os.path.splitext(ele)[0] for ele in os.listdir(seg_roi_dir) if ele.endswith(".json")])
     assert len(roi_lst) == len(seg_lst), "ROI segmentation is not completed yet"
@@ -50,18 +54,22 @@ if __name__ == "__main__":
 
     # overlay nuclei segmentation
     for ind, cur_roi in enumerate(roi_lst):
-        print("Overlay {}/{} ROI: {}".format(ind+1, len(roi_lst), cur_roi))
+        print(f"Overlay {ind+1}/{len(roi_lst)} ROI: {cur_roi}")
         # read image
         roi_path = os.path.join(input_roi_dir, cur_roi + ".png")
-        roi_img = io.imread(roi_path)   
+        with open(roi_path, "rb") as f:
+            roi_img = io.imread(f, plugin='pil')   
         # load segmentation
         seg_path = os.path.join(seg_roi_dir, cur_roi + ".json")
-        seg_dict = json.load(open(seg_path, "r"))
+        with open(seg_path, "r") as f:
+            seg_dict = json.load(f)
+            
         inst_dict = seg_dict["nuc"]
         for idx, [inst_id, inst_info] in enumerate(inst_dict.items()):
             inst_contour = np.expand_dims(np.array(inst_info["contour"]), axis=1)
             inst_color = cell_color_dict[inst_info["type"]]
             cv2.drawContours(roi_img, [inst_contour,], 0, inst_color, 1)
         seg_overlay_path = os.path.join(seg_overlay_dir, cur_roi + ".png") 
-        io.imsave(seg_overlay_path, roi_img)
-                
+        with open(seg_overlay_path, "wb") as f:
+            io.imsave(f, roi_img)
+

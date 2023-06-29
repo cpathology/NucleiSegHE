@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import os, sys
-import copy, argparse, pytz, shutil
+import os
+import argparse
+import pytz
 from datetime import datetime
 
 from infer.tile import InferManager
