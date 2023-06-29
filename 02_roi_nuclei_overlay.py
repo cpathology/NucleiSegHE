@@ -12,7 +12,7 @@ from misc.utils import bounding_box, random_colors
 def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
-    parser.add_argument("--dataset",           type=str,       default="LungNYU", choices=["LungNYU", "LungJapan"])     
+    parser.add_argument("--dataset",           type=str,       default="LungNYU")     
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")
     parser.add_argument("--seg_dir",           type=str,       default="RawSegs")
     parser.add_argument("--overlay_dir",       type=str,       default="SegOverlays")
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Blue-Others / Purple-Neoplastic / Cyan-Inflammatory / Lime-Connective / Teal-Dead / Brown-Non-Neoplastic   
 
     # directory setting
-    dataset_root_dir = os.path.join(args.data_root, "ROIs", args.dataset)
+    dataset_root_dir = os.path.join(args.data_root, args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
         sys.exit("{} directory not exist.".format(input_roi_dir))
