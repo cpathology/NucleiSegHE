@@ -11,10 +11,10 @@ def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--checkpoint_dir",    type=str,       default="Checkpoints")
-    parser.add_argument("--dataset",           type=str,       default="LungNYU", choices=["LungNYU", "LungJapan"])      
+    parser.add_argument("--dataset",           type=str,       default="LungNYU")      
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")
     parser.add_argument("--seg_dir",           type=str,       default="RawSegs")
-    parser.add_argument("--gpu_ids",           type=str,       default="0,1")
+    parser.add_argument("--gpu_ids",           type=str,       default="0")
     parser.add_argument("--batch_size",        type=int,       default=16)
     parser.add_argument("--num_workers",       type=int,       default=4)
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
 
     # directory setting
-    dataset_root_dir = os.path.join(args.data_root, "ROIs", args.dataset)
+    dataset_root_dir = os.path.join(args.data_root, args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
         sys.exit("{} directory not exist.".format(input_roi_dir))
