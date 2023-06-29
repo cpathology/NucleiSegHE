@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # Blue-Others / Purple-Neoplastic / Cyan-Inflammatory / Lime-Connective / Teal-Dead / Brown-Non-Neoplastic   
 
     # directory setting
-    dataset_root_dir = os.path.join(args.data_root, args.dataset)
+    dataset_root_dir = os.path.join(args.data_root, "ROIs", args.dataset)
     input_roi_dir = os.path.join(dataset_root_dir, args.roi_dir)
     if not os.path.exists(input_roi_dir):
         raise ValueError(f"{input_roi_dir} directory not exist.")
