@@ -12,7 +12,7 @@ def set_args():
     parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--checkpoint_dir",    type=str,       default="Checkpoints")
-    parser.add_argument("--dataset",           type=str,       default="CLL", choices=["CLL", "NLPHL", "Lung"])    
+    parser.add_argument("--dataset",           type=str,       default="CLL")    
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
     parser.add_argument("--block_seg_dir",     type=str,       default="BlockSegs")
     parser.add_argument("--slide_seg_dir",     type=str,       default="SlideSegs")    

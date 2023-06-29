@@ -18,7 +18,7 @@ def set_args():
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
     parser.add_argument("--block_size",        type=int,       default=5000)
     parser.add_argument("--num_workers",       type=int,       default=64)
-    parser.add_argument("--dataset",           type=str,       default="CLL", choices=["CLL", "NLPHL", "Lung"])    
+    parser.add_argument("--dataset",           type=str,       default="CLL")    
     args = parser.parse_args()
     return args
 

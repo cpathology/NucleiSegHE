@@ -22,7 +22,7 @@ def set_args():
     parser.add_argument("--block_dir",        type=str,       default="SlideBlocks")
     parser.add_argument("--block_seg_dir",    type=str,       default="BlockSegs")
     parser.add_argument("--overlay_dir",      type=str,       default="OverlaySlides")
-    parser.add_argument("--dataset",          type=str,       default="CLL", choices=["CLL", "NLPHL", "Lung"])      
+    parser.add_argument("--dataset",          type=str,       default="CLL")      
 
     args = parser.parse_args()
     return args
