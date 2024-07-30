@@ -31,7 +31,6 @@ WORKDIR /.local
 RUN chmod 777 /.local
 WORKDIR /Data
 RUN chmod 777 /Data
-WORKDIR /App/
+WORKDIR /App/NucleiSegHE
 
 CMD ["/bin/bash"]
-# CMD["/usr/bin/python3", "python_script.py"]
