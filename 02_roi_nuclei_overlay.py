@@ -1,20 +1,16 @@
-import os
-import sys
-import copy
-import argparse
-import pytz
-import shutil
-import json
+# -*- coding: utf-8 -*-
+
+import os, sys
+import copy, argparse, pytz, shutil, json
 from datetime import datetime
 import numpy as np
 from skimage import io
 import cv2
 
-
 from misc.utils import bounding_box, random_colors
 
 def set_args():
-    parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
+    parser = argparse.ArgumentParser(description = "Overlaying cell nuclei onto ROI")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--dataset",           type=str,       default="LungNYU")     
     parser.add_argument("--roi_dir",           type=str,       default="RawROIs")

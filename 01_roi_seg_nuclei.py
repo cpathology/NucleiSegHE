@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
-import argparse
-import pytz
+import os, sys
+import copy, argparse, pytz, shutil
 from datetime import datetime
 
 from infer.tile import InferManager
 
 
 def set_args():
-    parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
+    parser = argparse.ArgumentParser(description = "Segmenting ROI cell nuclei")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--checkpoint_dir",    type=str,       default="Checkpoints")
     parser.add_argument("--dataset",           type=str,       default="LungNYU")      

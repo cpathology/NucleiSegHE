@@ -9,14 +9,14 @@ from misc.utils import shift_contour
 
 
 def set_args():
-    parser = argparse.ArgumentParser(description = "Splitting WSI to blocks")
+    parser = argparse.ArgumentParser(description = "Segmenting WSI cell nuclei")
     parser.add_argument("--data_root",         type=str,       default="/Data")
     parser.add_argument("--checkpoint_dir",    type=str,       default="Checkpoints")
     parser.add_argument("--dataset",           type=str,       default="CLL")    
     parser.add_argument("--block_dir",         type=str,       default="SlideBlocks")
     parser.add_argument("--block_seg_dir",     type=str,       default="BlockSegs")
     parser.add_argument("--slide_seg_dir",     type=str,       default="SlideSegs")    
-    parser.add_argument("--gpu_ids",           type=str,       default="0,1,2,3")
+    parser.add_argument("--gpu_ids",           type=str,       default="0")
     parser.add_argument("--batch_size",        type=int,       default=64)
     parser.add_argument("--num_workers",       type=int,       default=32)
 

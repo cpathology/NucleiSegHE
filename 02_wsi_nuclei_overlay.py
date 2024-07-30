@@ -16,7 +16,7 @@ from misc.utils import numpy2tiff
 
 
 def set_args():
-    parser = argparse.ArgumentParser(description = "Overlay segmentation")
+    parser = argparse.ArgumentParser(description = "Overlaying cell nuclei onto WSI")
     parser.add_argument("--data_root",        type=str,       default="/Data")
     parser.add_argument("--slide_dir",        type=str,       default="RawSlides")
     parser.add_argument("--block_dir",        type=str,       default="SlideBlocks")

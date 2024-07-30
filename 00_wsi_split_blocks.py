@@ -1,11 +1,11 @@
-import os
-import shutil
-import argparse
-import pytz
+# -*- coding: utf-8 -*-
+
+import os, sys
+import shutil, argparse, pytz
+from datetime import datetime
 import openslide
 import numpy as np
 from skimage import io
-from datetime import datetime
 from concurrent import futures
 
 from misc.utils import get_splitting_coors
