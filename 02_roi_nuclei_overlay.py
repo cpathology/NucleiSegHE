@@ -66,6 +66,5 @@ if __name__ == "__main__":
             inst_color = cell_color_dict[inst_info["type"]]
             cv2.drawContours(roi_img, [inst_contour,], 0, inst_color, 1)
         seg_overlay_path = os.path.join(seg_overlay_dir, cur_roi + ".png") 
-        with open(seg_overlay_path, "wb") as f:
-            io.imsave(f, roi_img)
+        io.imsave(seg_overlay_path, roi_img)
 
