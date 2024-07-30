@@ -8,12 +8,12 @@ H&E ROI-Level and WSI-Level Nuclei Segmentation with HoVer-Net - [pretrained mod
 ### a. Prepare docker image
 * Build from Dockerfile
 ```
-$ docker build -t nucleiseghe:chen .
+$ docker build --platform linux/x86_64 -t nucleiseghe:pchen6 .
 ```
 * Or pull from Docker Hub
 ```
-$ docker pull pingjunchen/nucleiseghe:chen
-$ docker tag pingjunchen/nucleiseghe:chen nucleiseghe:chen
+$ docker pull pingjunchen/nucleiseghe:pchen6
+$ docker tag pingjunchen/nucleiseghe:pchen6 nucleiseghe:pchen6
 ```
 ### b. Setup docker container
 * Start docker container (specify CODE_ROOT & DATA_ROOT)
@@ -21,16 +21,16 @@ $ docker tag pingjunchen/nucleiseghe:chen nucleiseghe:chen
 $ docker run -it --rm --user $(id -u):$(id -g) \
   -v ${CODE_ROOT}:/App/NucleiSegHE \
   -v ${DATA_ROOT}:/Data \
-  --shm-size=224G --gpus '"device=0,1"' --cpuset-cpus=0-15 \
-  --name nucleiseghe_chen nucleiseghe:chen
+  --shm-size=32G --gpus '"device=0"' --cpuset-cpus=0-15 \
+  --name nucleiseghe_pchen6 nucleiseghe:pchen6
 ```
 * For example:
 ```
 $ docker run -it --rm  --user $(id -u):$(id -g) \
   -v /rsrch1/ip/pchen6/Codes/CHEN/NucleiSegHE:/App/NucleiSegHE \
   -v /rsrch1/ip/pchen6/NucleiSegData:/Data \
-  --shm-size=224G --gpus '"device=0,1"' --cpuset-cpus=0-15 \
-  --name nucleiseghe_chen nucleiseghe:chen
+  --shm-size=32G --gpus '"device=0"' --cpuset-cpus=0-15 \
+  --name nucleiseghe_pchen6 nucleiseghe:pchen6
 ```
 
 ## ROI-Level Nuclei Seg (support png)
