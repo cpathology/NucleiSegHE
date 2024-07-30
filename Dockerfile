@@ -5,12 +5,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV HDF5_USE_FILE_LOCKING FALSE
 ENV NUMBA_CACHE_DIR /tmp
 
-# set web proxy
-ENV http_proxy http://1mcwebproxy01.mdanderson.edu:3128
-ENV https_proxy http://1mcwebproxy01.mdanderson.edu:3128
-ENV HTTP_PROXY http://1mcwebproxy01.mdanderson.edu:3128
-ENV HTTPS_PROXY http://1mcwebproxy01.mdanderson.edu:3128
-
 # install libraries
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential libgl1-mesa-glx libglib2.0-0 libgeos-dev libvips-tools \
@@ -19,10 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install python packages
 RUN pip install gpustat==0.6.0 setuptools==61.2.0 pytz==2021.1 termcolor==1.1.0
-RUN pip install openslide-python==1.2.0 tifffile==2021.10.12
-RUN pip install opencv-python==4.5.4.60 scikit-image==0.18.0
 RUN pip install joblib==1.2.0 tqdm==4.64.0 docopt==0.6.2 imgaug==0.4.0
+RUN pip install openslide-python==1.3.1 tifffile==2024.7.21
 RUN pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 torchinfo==1.8.0 torchmetrics==1.4.0 
+RUN pip install opencv-python==4.5.4.60 scikit-image==0.23.1
+RUN pip install numpy==1.26.4
 
 # Set environment variables
 WORKDIR /.dgl
